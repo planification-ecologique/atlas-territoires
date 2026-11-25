@@ -109,3 +109,46 @@ def test_demo_export(tmp_path):
         assert len(np.fromfile(tmp_path / "24" / "r6" / f"{ind['id']}.c8", dtype="u1")) == n
     registry = json.loads((tmp_path / "registry.json").read_text())
     assert {p["id"] for p in registry["pairs"]} == set(m["pairs"])
+
+
+def test_polygon_share_counts_overlaps_once(ctx):
+    west = box(1.0, 47.0, 1.33, 48.0)
+    one = METHODS["polygon_share"](ctx, gpd.GeoDataFrame(geometry=[west], crs="EPSG:4326"))
+    twice = METHODS["polygon_share"](ctx, gpd.GeoDataFrame(geometry=[west, west], crs="EPSG:4326"))
+    assert np.allclose(one, twice, atol=1e-6)
+
+
+def test_subdivide_conserves_area():
+    from atlas_pipeline.indicators import _subdivide
+
+    disc = Point(0, 0).buffer(1000, quad_segs=2000).difference(Point(100, 0).buffer(300, quad_segs=500))
+    pieces = _subdivide(np.array([disc]))
+    assert len(pieces) > 10
+    assert sum(p.area for p in pieces) == pytest.approx(disc.area)
+    assert max(p.exterior.coords.__len__() for p in pieces) <= 256
+
+
+def test_read_vector_layer_and_projected_bbox(tmp_path):
+    from atlas_pipeline.sources import read_vector
+
+    # Coins nord-ouest et sud-est de la région : hors de l'emprise si l'on ne projette que deux coins.
+    pts = gpd.GeoDataFrame({"k": [1, 2]}, geometry=[Point(0.06, 48.94), Point(3.12, 46.35)], crs="EPSG:4326").to_crs("EPSG:3035")
+    f = tmp_path / "x.gpkg"
+    pts.to_file(f, layer="bonne")
+    pts.to_file(f, layer="bonne_bis")
+    assert len(read_vector([f], (0.05, 46.34, 3.13, 48.95), layer="BONNE")) == 2
+
+
+def test_fetch_refuses_html_error_pages(tmp_path, monkeypatch):
+    from atlas_pipeline import sources
+
+    class Page:
+        headers = {"content-type": "text/html;charset=UTF-8"}
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def raise_for_status(self): pass
+
+    monkeypatch.setattr(sources, "CACHE", tmp_path)
+    monkeypatch.setattr(sources.requests, "get", lambda *a, **k: Page())
+    with pytest.raises(RuntimeError, match="HTML"):
+        sources.fetch("x", {"url": "https://example.org/sic.zip"})

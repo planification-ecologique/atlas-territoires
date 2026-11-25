@@ -18,7 +18,7 @@
     "id": "filosofi_200m",
     "label": "Insee, Filosofi 2021, données carroyées à 200 m",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+    "page": "https://www.insee.fr/fr/statistiques/8735162?sommaire=8735243"
    },
    "classes": "seuils",
    "breaks": [
@@ -45,7 +45,7 @@
     "id": "filosofi_200m",
     "label": "Insee, Filosofi 2021, données carroyées à 200 m",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+    "page": "https://www.insee.fr/fr/statistiques/8735162?sommaire=8735243"
    },
    "classes": "quantiles",
    "weight": true,
@@ -61,7 +61,7 @@
     "id": "filosofi_200m",
     "label": "Insee, Filosofi 2021, données carroyées à 200 m",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+    "page": "https://www.insee.fr/fr/statistiques/8735162?sommaire=8735243"
    },
    "classes": "seuils",
    "breaks": [
@@ -88,7 +88,7 @@
     "id": "filosofi_200m",
     "label": "Insee, Filosofi 2021, données carroyées à 200 m",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+    "page": "https://www.insee.fr/fr/statistiques/8735162?sommaire=8735243"
    },
    "classes": "seuils",
    "breaks": [
@@ -161,9 +161,9 @@
    "unit": "part de surface",
    "source": {
     "id": "eaip_cours_eau",
-    "label": "Enveloppe approchée des inondations potentielles (débordement de cours d'eau)",
+    "label": "Enveloppe approchée des inondations potentielles, débordement de cours d'eau (EPRI 2011)",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://www.georisques.gouv.fr/donnees/bases-de-donnees/zonages-inondation-rapportage-2020"
+    "page": "https://www.georisques.gouv.fr/"
    },
    "classes": "seuils",
    "breaks": [
@@ -217,7 +217,7 @@
     "id": "znieff1",
     "label": "INPN, ZNIEFF de type I",
     "licence": "Licence Ouverte 2.0",
-    "page": "https://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/inv/znieff1"
+    "page": "https://www.data.gouv.fr/datasets/inpn-donnees-du-programme-znieff"
    },
    "classes": "seuils",
    "breaks": [
@@ -242,7 +242,7 @@
    "unit": "part de surface",
    "source": {
     "id": "rpg",
-    "label": "IGN, registre parcellaire graphique (RPG), niveau 1",
+    "label": "IGN, registre parcellaire graphique (RPG) 2025, parcelles",
     "licence": "Licence Ouverte 2.0",
     "page": "https://geoservices.ign.fr/rpg"
    },

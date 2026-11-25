@@ -43,10 +43,8 @@ export function HexMap({ cells, region, view, flyTo, onHover }: Props) {
 
   const apply = (v: MapView) => {
     const map = mapRef.current;
-    if (!map || !ready.current) {
-      pending.current = v;
-      return;
-    }
+    pending.current = v;
+    if (!map || !ready.current) return;
     const prev = applied.current;
     for (let i = 0; i < v.state.length; i++) {
       if (!prev || prev[i] !== v.state[i]) map.setFeatureState({ source: SRC, id: i }, { s: v.state[i] });
@@ -79,17 +77,23 @@ export function HexMap({ cells, region, view, flyTo, onHover }: Props) {
       }
     });
 
-    map.on("load", () => {
+    // style.load, et non load : on n'attend pas que toutes les tuiles du fond soient arrivées.
+    map.on("style.load", () => {
       clearTimeout(fallback);
+      applied.current = null;
       const features = cells.map((h, i) => ({
         type: "Feature" as const,
         id: i,
         properties: {},
         geometry: { type: "Polygon" as const, coordinates: [cellToBoundary(h, true)] },
       }));
-      map.addSource(SRC, { type: "geojson", data: { type: "FeatureCollection", features } });
-      // Les hexagones passent sous les libellés du fond pour garder les noms lisibles.
-      const beforeId = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
+      // tolerance 0 : sinon les hexagones, plus petits qu'un pixel, sont simplifiés et disparaissent aux petits zooms.
+      map.addSource(SRC, { type: "geojson", data: { type: "FeatureCollection", features }, tolerance: 0 });
+      // Les hexagones passent sous les libellés du fond pour garder les noms lisibles, mais au-dessus de ses
+      // aplats : le style IGN mêle des libellés (courbes de niveau) aux aplats, d'où la recherche après le dernier.
+      const layers = map.getStyle().layers;
+      const lastFill = layers.map((l) => l.type).lastIndexOf("fill");
+      const beforeId = layers.slice(lastFill + 1).find((l) => l.type === "symbol")?.id;
       map.addLayer({
         id: "hex-fill",
         type: "fill",

@@ -13,8 +13,8 @@ la France sans réutiliser son code : application statique, grille hexagonale [H
 indicateurs pré-calculés en tableaux binaires, paires définies comme des données.
 
 > **État : prototype.** Une région (Centre-Val de Loire), résolution H3 8 (hexagones d'environ 74 ha),
-> 11 indicateurs, 13 paires. Le dépôt contient un **jeu de démonstration synthétique** pour faire tourner
-> l'interface ; les vraies données se construisent avec le pipeline (voir plus bas).
+> 11 indicateurs, 13 paires. Le dépôt contient les données réelles construites par le pipeline à partir des
+> sources ouvertes (voir plus bas).
 
 ## Ce que fait l'outil
 
@@ -37,7 +37,7 @@ pipeline/            Python : sources ouvertes -> grille H3 -> fichiers binaires
   sources.yaml       URL, licences et colonnes des sources brutes
   atlas_pipeline/    méthodes d'agrégation, classement, export, jeu de démo
 web/                 application React + MapLibre + h3-js, sans serveur
-  public/data/       fichiers produits par le pipeline (jeu de démo versionné)
+  public/data/       fichiers produits par le pipeline (versionnés)
 docs/                format des données, feuille de route
 ```
 
@@ -47,7 +47,7 @@ existante ne convient, une fonction dans `pipeline/atlas_pipeline/indicators.py`
 
 ## Démarrer
 
-Application (avec le jeu de démonstration déjà présent) :
+Application (avec les données déjà présentes) :
 
 ```bash
 cd web
@@ -67,9 +67,9 @@ python -m atlas_pipeline report    # résume les paires de la région construite
 pytest
 ```
 
-`build` télécharge les sources dans `pipeline/cache/raw/`. Certaines n'ont pas d'URL stable (Filosofi 200 m,
-EAIP, RPG) : le message d'erreur indique la page où télécharger le fichier et le dossier où le déposer. Un
-indicateur dont la source manque est ignoré, et l'application n'affiche que ce qui a été construit.
+`build` télécharge les sources dans `pipeline/cache/raw/` (environ 1,2 Go, 3 Go une fois décompressées ; 7z est
+nécessaire). L'EAIP est lue objet par objet sur le WFS Géorisques, lent (compter une demi-heure). Une source sans URL peut être déposée à la main dans `pipeline/cache/raw/<id>/`. `demo` écrase les données versionnées :
+utiliser `--out` pour l'écrire ailleurs. Un indicateur dont la source manque est ignoré, et l'application n'affiche que ce qui a été construit.
 
 ## Méthodes d'agrégation
 
@@ -88,9 +88,8 @@ Les classes sont soit des seuils fixés à la main (lisibles, comparables entre 
 
 Toutes les sources du prototype sont ouvertes (Licence Ouverte 2.0) : Insee Filosofi 2021 carroyé à 200 m,
 Cerema consommation d'espaces NAF 2011-2025, EAIP cours d'eau, INPN (Natura 2000, ZNIEFF), IGN (ADMIN EXPRESS,
-RPG, fond Plan IGN), ODRÉ registre national des installations de production d'électricité. Le détail et les
-URL sont dans [`pipeline/sources.yaml`](pipeline/sources.yaml) ; celles marquées `verify: true` restent à
-confirmer.
+RPG, fond Plan IGN), ODRÉ registre national des installations de production d'électricité. Le détail, les
+URL et les millésimes sont dans [`pipeline/sources.yaml`](pipeline/sources.yaml), vérifiés en novembre 2026.
 
 ## Suite
 

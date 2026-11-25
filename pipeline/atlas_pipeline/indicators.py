@@ -13,6 +13,7 @@ from typing import Any, Callable
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import shapely
 
 from . import grid
 
@@ -117,13 +118,47 @@ def grid_areal_ratio(ctx: GridContext, gdf: gpd.GeoDataFrame, num: str, den: str
     return r.astype(np.float32)
 
 
+def _subdivide(geoms: np.ndarray, max_vertices: int = 256) -> np.ndarray:
+    """Découpe les grands polygones en morceaux, pour que l'intersection avec
+    un hexagone ne parcoure pas des centaines de milliers de sommets."""
+    done: list[np.ndarray] = []
+    todo = shapely.get_parts(geoms)
+    for _ in range(24):
+        big = shapely.get_num_coordinates(todo) > max_vertices
+        done.append(todo[~big])
+        todo = todo[big]
+        if not len(todo):
+            break
+        x0, y0, x1, y1 = shapely.bounds(todo).T
+        wide = (x1 - x0) >= (y1 - y0)
+        xm = np.where(wide, (x0 + x1) / 2, x1)
+        ym = np.where(wide, y1, (y0 + y1) / 2)
+        a = shapely.box(x0, y0, xm, ym)
+        b = shapely.box(np.where(wide, xm, x0), np.where(wide, y0, ym), x1, y1)
+        parts = shapely.get_parts(np.concatenate([shapely.intersection(todo, a), shapely.intersection(todo, b)]))
+        todo = parts[shapely.get_dimensions(parts) == 2]
+    return np.concatenate([*done, todo])
+
+
 @method("polygon_share")
 def polygon_share(ctx: GridContext, gdf: gpd.GeoDataFrame, **_: Any) -> np.ndarray:
     """Part de la surface de chaque hexagone couverte par l'union des polygones."""
-    union = gdf.to_crs(grid.L93).geometry.make_valid().union_all()
-    hexes = ctx.polygons.to_crs(grid.L93)
-    covered = hexes.geometry.intersection(union).area.values
-    return np.clip(covered / hexes.geometry.area.values, 0, 1).astype(np.float32)
+    geoms = shapely.get_parts(gdf.to_crs(grid.L93).geometry.make_valid().values)
+    # make_valid peut rendre des collections : on les ouvre et on ne garde que les surfaces.
+    geoms = shapely.get_parts(geoms)
+    pieces = _subdivide(geoms[shapely.get_dimensions(geoms) == 2])
+    hexes = ctx.polygons.to_crs(grid.L93).geometry.values
+    ih, ip = shapely.STRtree(pieces).query(hexes, predicate="intersects")
+    covered = np.zeros(ctx.n)
+    if len(ih):
+        order = np.argsort(ih, kind="stable")
+        ih, ip = ih[order], ip[order]
+        inter = shapely.intersection(hexes[ih], pieces[ip])
+        # Union par hexagone : les zonages se recouvrent (ZSC et ZPS, par exemple).
+        starts = np.flatnonzero(np.r_[True, np.diff(ih) > 0])
+        for s, e in zip(starts, np.r_[starts[1:], len(ih)]):
+            covered[ih[s]] = shapely.area(inter[s] if e - s == 1 else shapely.union_all(inter[s:e]))
+    return np.clip(covered / shapely.area(hexes), 0, 1).astype(np.float32)
 
 
 @method("commune_spread_density")

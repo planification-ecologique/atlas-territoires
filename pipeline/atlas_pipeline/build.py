@@ -17,13 +17,17 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
     bbox = tuple(r["bbox"])
     ae = reg.sources["admin_express"]
     print(f"[1/3] contours ADMIN EXPRESS, région {region} ({r['name']})")
-    ae_paths = sources.fetch("admin_express", ae)
+    ae_paths = sources.fetch("admin_express", ae, region, bbox)
     regions = sources.read_vector(ae_paths, bbox, layer=ae["layers"]["regions"])
     code_col = next(c for c in regions.columns if c.lower() in ("insee_reg", "code_insee"))
     region_geom = regions.loc[regions[code_col].astype(str) == region].geometry.union_all()
     communes = sources.read_vector(ae_paths, bbox, layer=ae["layers"]["communes"])
     ccode = next(c for c in communes.columns if c.lower() in ("insee_com", "code_insee"))
-    cname = next(c for c in communes.columns if c.lower() in ("nom", "nom_m", "nom_com"))
+    cname = next(c for c in communes.columns if c.lower() in ("nom", "nom_officiel", "nom_m", "nom_com"))
+    # Les communes limitrophes sont dans l'emprise : on ne garde que celles de la région.
+    creg = next((c for c in communes.columns if c.lower() in ("insee_reg", "code_insee_de_la_region")), None)
+    if creg:
+        communes = communes[communes[creg].astype(str) == region]
     communes = communes.rename(columns={ccode: "code", cname: "nom"})[["code", "nom", "geometry"]]
 
     print(f"[2/3] grille H3 r{res}")
@@ -50,8 +54,8 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
         src = reg.sources[sid]
         try:
             if sid not in cache:
-                paths = sources.fetch(sid, src)
-                cache[sid] = sources.read_table(paths, src) if src.get("format") == "csv" else sources.read_vector(paths, bbox)
+                paths = sources.fetch(sid, src, region, bbox)
+                cache[sid] = sources.read_table(paths, src) if src.get("format") == "csv" else sources.read_vector(paths, bbox, layer=src.get("layer"))
             values[ind["id"]] = compute(ctx, ind, cache[sid], src)
             print(f"  ✓ {ind['id']}")
         except Exception as e:  # noqa: BLE001
