@@ -1,0 +1,494 @@
+{
+ "themes": {
+  "population": "Population et société",
+  "foncier": "Foncier et artificialisation",
+  "risques": "Risques et climat",
+  "nature": "Nature et biodiversité",
+  "agriculture": "Agriculture",
+  "energie": "Énergie"
+ },
+ "indicators": [
+  {
+   "id": "pop_densite",
+   "label": "Densité de population",
+   "theme": "population",
+   "role": "etat",
+   "unit": "hab/km²",
+   "source": {
+    "id": "filosofi_200m",
+    "label": "Insee, Filosofi 2021, données carroyées à 200 m",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+   },
+   "classes": "seuils",
+   "breaks": [
+    25,
+    100,
+    500,
+    2000
+   ],
+   "high": {
+    "value": 500
+   },
+   "low": {
+    "value": 25
+   },
+   "description": "Nombre de résidents par km², à partir des carreaux de 200 m de l'Insee (Filosofi), agrégés sur chaque hexagone.\n"
+  },
+  {
+   "id": "pop_habitants",
+   "label": "Habitants",
+   "theme": "population",
+   "role": "etat",
+   "unit": "hab",
+   "source": {
+    "id": "filosofi_200m",
+    "label": "Insee, Filosofi 2021, données carroyées à 200 m",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+   },
+   "classes": "quantiles",
+   "weight": true,
+   "description": "Nombre de résidents dans l'hexagone. Sert à compter les habitants concernés par une paire.\n"
+  },
+  {
+   "id": "pop_65plus_part",
+   "label": "Part des 65 ans et plus",
+   "theme": "population",
+   "role": "etat",
+   "unit": "part",
+   "source": {
+    "id": "filosofi_200m",
+    "label": "Insee, Filosofi 2021, données carroyées à 200 m",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.15,
+    0.22,
+    0.28,
+    0.35
+   ],
+   "high": {
+    "value": 0.28
+   },
+   "low": {
+    "value": 0.15
+   },
+   "description": "Part des résidents âgés de 65 ans ou plus. Indicateur de vulnérabilité à la chaleur et aux inondations.\n"
+  },
+  {
+   "id": "pauvrete_part",
+   "label": "Ménages pauvres",
+   "theme": "population",
+   "role": "etat",
+   "unit": "part",
+   "source": {
+    "id": "filosofi_200m",
+    "label": "Insee, Filosofi 2021, données carroyées à 200 m",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.insee.fr/fr/statistiques/8735103?sommaire=8735243"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.05,
+    0.1,
+    0.15,
+    0.25
+   ],
+   "high": {
+    "value": 0.15
+   },
+   "low": {
+    "value": 0.05
+   },
+   "description": "Part des ménages sous le seuil de pauvreté (60 % du niveau de vie médian).\n"
+  },
+  {
+   "id": "conso_enaf",
+   "label": "Consommation d'espaces 2011-2024",
+   "theme": "foncier",
+   "role": "etat",
+   "unit": "ha/km²",
+   "source": {
+    "id": "cerema_conso_carroyage",
+    "label": "Cerema, consommation d'espaces NAF 2011-2025, carroyage 1 km",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.data.gouv.fr/datasets/consommation-despaces-naturels-agricoles-et-forestiers-du-1er-janvier-2011-au-1er-janvier-2025"
+   },
+   "classes": "quantiles",
+   "high": {
+    "class_min": 4
+   },
+   "low": {
+    "class_max": 2
+   },
+   "description": "Hectares d'espaces naturels, agricoles et forestiers consommés entre 2011 et 2024 par km², d'après les fichiers fonciers (Cerema). C'est la mesure de référence de la trajectoire ZAN.\n"
+  },
+  {
+   "id": "conso_habitat_part",
+   "label": "Part de la consommation due à l'habitat",
+   "theme": "foncier",
+   "role": "etat",
+   "unit": "part",
+   "source": {
+    "id": "cerema_conso_carroyage",
+    "label": "Cerema, consommation d'espaces NAF 2011-2025, carroyage 1 km",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.data.gouv.fr/datasets/consommation-despaces-naturels-agricoles-et-forestiers-du-1er-janvier-2011-au-1er-janvier-2025"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.3,
+    0.5,
+    0.7,
+    0.85
+   ],
+   "high": {
+    "value": 0.7
+   },
+   "low": {
+    "value": 0.3
+   },
+   "description": "Part de la consommation d'espaces 2011-2024 destinée à l'habitat (le reste va surtout aux activités et aux infrastructures).\n"
+  },
+  {
+   "id": "inondation_eaip",
+   "label": "Zone inondable potentielle",
+   "theme": "risques",
+   "role": "risque",
+   "unit": "part de surface",
+   "source": {
+    "id": "eaip_cours_eau",
+    "label": "Enveloppe approchée des inondations potentielles (débordement de cours d'eau)",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.georisques.gouv.fr/donnees/bases-de-donnees/zonages-inondation-rapportage-2020"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.01,
+    0.1,
+    0.3,
+    0.6
+   ],
+   "high": {
+    "value": 0.3
+   },
+   "low": {
+    "value": 0.01
+   },
+   "description": "Part de l'hexagone couverte par l'enveloppe approchée des inondations potentielles par débordement de cours d'eau (EAIP).\n"
+  },
+  {
+   "id": "natura2000",
+   "label": "Natura 2000",
+   "theme": "nature",
+   "role": "contrainte",
+   "unit": "part de surface",
+   "source": {
+    "id": "natura2000",
+    "label": "INPN, sites Natura 2000 (SIC/ZSC et ZPS)",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.data.gouv.fr/datasets/inpn-donnees-du-programme-natura-2000"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.01,
+    0.25,
+    0.5,
+    0.9
+   ],
+   "high": {
+    "value": 0.5
+   },
+   "low": {
+    "value": 0.01
+   },
+   "description": "Part de l'hexagone dans un site Natura 2000 (directive Habitats ou Oiseaux).\n"
+  },
+  {
+   "id": "znieff1",
+   "label": "ZNIEFF de type I",
+   "theme": "nature",
+   "role": "contrainte",
+   "unit": "part de surface",
+   "source": {
+    "id": "znieff1",
+    "label": "INPN, ZNIEFF de type I",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/inv/znieff1"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.01,
+    0.25,
+    0.5,
+    0.9
+   ],
+   "high": {
+    "value": 0.5
+   },
+   "low": {
+    "value": 0.01
+   },
+   "description": "Part de l'hexagone dans une zone naturelle d'intérêt écologique, faunistique et floristique de type I.\n"
+  },
+  {
+   "id": "agri_part",
+   "label": "Terres agricoles déclarées",
+   "theme": "agriculture",
+   "role": "etat",
+   "unit": "part de surface",
+   "source": {
+    "id": "rpg",
+    "label": "IGN, registre parcellaire graphique (RPG), niveau 1",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://geoservices.ign.fr/rpg"
+   },
+   "classes": "seuils",
+   "breaks": [
+    0.1,
+    0.3,
+    0.5,
+    0.75
+   ],
+   "high": {
+    "value": 0.5
+   },
+   "low": {
+    "value": 0.1
+   },
+   "description": "Part de l'hexagone couverte par des parcelles agricoles déclarées à la PAC (registre parcellaire graphique).\n"
+  },
+  {
+   "id": "enr_puissance",
+   "label": "Puissance EnR installée (solaire + éolien)",
+   "theme": "energie",
+   "role": "opportunite",
+   "unit": "MW/km²",
+   "source": {
+    "id": "odre_registre",
+    "label": "ODRÉ, registre national des installations de production et de stockage d'électricité",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.data.gouv.fr/datasets/registre-national-des-installations-de-production-et-de-stockage-delectricite-au-30-09-2026"
+   },
+   "classes": "quantiles",
+   "high": {
+    "class_min": 4
+   },
+   "low": {
+    "class_max": 1
+   },
+   "description": "Puissance solaire et éolienne raccordée, en MW par km². Le registre national est publié par commune : la puissance est répartie uniformément sur les hexagones de la commune (approximation à remplacer par les localisations exactes quand elles seront disponibles).\n"
+  }
+ ],
+ "pairs": [
+  {
+   "id": "conso_x_agri",
+   "type": "conflit",
+   "a": {
+    "indicator": "conso_enaf",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "agri_part",
+    "end": "high"
+   },
+   "title": "L'artificialisation consomme des terres cultivées",
+   "question": "Où la consommation d'espaces se fait-elle au détriment des terres agricoles, et la trajectoire ZAN protège-t-elle d'abord ces terres ?\n"
+  },
+  {
+   "id": "conso_x_natura",
+   "type": "conflit",
+   "a": {
+    "indicator": "conso_enaf",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "natura2000",
+    "end": "high"
+   },
+   "title": "L'artificialisation progresse dans les sites Natura 2000",
+   "question": "La consommation d'espaces touche-t-elle des sites protégés, et faut-il un objectif de réduction renforcé dans ces secteurs ?\n"
+  },
+  {
+   "id": "conso_x_znieff",
+   "type": "conflit",
+   "a": {
+    "indicator": "conso_enaf",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "znieff1",
+    "end": "high"
+   },
+   "title": "L'artificialisation touche des ZNIEFF de type I",
+   "question": "Les inventaires de biodiversité, qui ne sont pas des protections réglementaires, suffisent-ils à orienter la consommation d'espaces ?\n"
+  },
+  {
+   "id": "conso_x_inondation",
+   "type": "conflit",
+   "a": {
+    "indicator": "conso_enaf",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "inondation_eaip",
+    "end": "high"
+   },
+   "title": "On construit en zone inondable",
+   "question": "Où la consommation d'espaces récente se fait-elle en zone inondable potentielle, et la SNAT doit-elle l'exclure des enveloppes de développement ?\n"
+  },
+  {
+   "id": "conso_habitat_x_densite_basse",
+   "type": "conflit",
+   "a": {
+    "indicator": "conso_habitat_part",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "pop_densite",
+    "end": "low"
+   },
+   "title": "Habitat diffus en secteur peu dense",
+   "question": "La consommation pour l'habitat se fait-elle surtout dans des secteurs peu denses, loin des services ? Quelle armature territoriale la SNAT veut-elle conforter ?\n"
+  },
+  {
+   "id": "densite_x_inondation",
+   "type": "conflit",
+   "a": {
+    "indicator": "pop_densite",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "inondation_eaip",
+    "end": "high"
+   },
+   "title": "Des quartiers denses en zone inondable",
+   "question": "Combien d'habitants vivent dans des secteurs denses exposés au débordement de cours d'eau, et quelle part de la stratégie d'adaptation leur est consacrée ?\n"
+  },
+  {
+   "id": "ages_x_inondation",
+   "type": "conflit",
+   "a": {
+    "indicator": "pop_65plus_part",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "inondation_eaip",
+    "end": "high"
+   },
+   "title": "Populations âgées exposées aux crues",
+   "question": "Les secteurs où la population est la plus âgée sont-ils aussi exposés ? Les plans de gestion de crise en tiennent-ils compte ?\n"
+  },
+  {
+   "id": "pauvrete_x_inondation",
+   "type": "conflit",
+   "a": {
+    "indicator": "pauvrete_part",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "inondation_eaip",
+    "end": "high"
+   },
+   "title": "Pauvreté et exposition aux crues se cumulent",
+   "question": "Les ménages les plus modestes sont-ils surexposés au risque, avec moins de moyens pour s'adapter ou se relocaliser ?\n"
+  },
+  {
+   "id": "inondation_x_densite_basse",
+   "type": "synergie",
+   "a": {
+    "indicator": "inondation_eaip",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "pop_densite",
+    "end": "low"
+   },
+   "title": "Des champs d'expansion des crues encore libres",
+   "question": "Ces zones inondables peu habitées peuvent-elles être sanctuarisées comme champs d'expansion des crues, au bénéfice des villes en aval ?\n"
+  },
+  {
+   "id": "natura_x_conso_basse",
+   "type": "synergie",
+   "a": {
+    "indicator": "natura2000",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "conso_enaf",
+    "end": "low"
+   },
+   "title": "Des sites protégés épargnés par l'artificialisation",
+   "question": "Où la protection fonctionne-t-elle, et qu'est-ce qui la distingue des sites sous pression ?\n"
+  },
+  {
+   "id": "enr_x_natura",
+   "type": "conflit",
+   "a": {
+    "indicator": "enr_puissance",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "natura2000",
+    "end": "high"
+   },
+   "title": "Énergies renouvelables dans des sites Natura 2000",
+   "question": "Les zones d'accélération des EnR évitent-elles les sites protégés, ou la planification énergétique et la planification écologique se contredisent-elles ?\n"
+  },
+  {
+   "id": "enr_x_agri",
+   "type": "conflit",
+   "a": {
+    "indicator": "enr_puissance",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "agri_part",
+    "end": "high"
+   },
+   "title": "Énergies renouvelables sur des terres agricoles",
+   "question": "Le développement du solaire au sol et de l'agrivoltaïsme se fait-il sur des terres cultivées ? Quel arbitrage la SNAT propose-t-elle entre souveraineté alimentaire et énergétique ?\n"
+  },
+  {
+   "id": "enr_x_densite_basse",
+   "type": "synergie",
+   "a": {
+    "indicator": "enr_puissance",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "pop_densite",
+    "end": "low"
+   },
+   "title": "Énergies renouvelables loin des habitations",
+   "question": "Les territoires peu denses qui accueillent la production d'énergie en tirent-ils des retombées, et comment la SNAT organise-t-elle la solidarité entre territoires producteurs et consommateurs ?\n"
+  }
+ ],
+ "regions": {
+  "24": {
+   "name": "Centre-Val de Loire",
+   "bbox": [
+    0.05,
+    46.34,
+    3.13,
+    48.95
+   ],
+   "center": [
+    1.68,
+    47.55
+   ],
+   "zoom": 7.2,
+   "departements": [
+    "18",
+    "28",
+    "36",
+    "37",
+    "41",
+    "45"
+   ]
+  }
+ }
+}

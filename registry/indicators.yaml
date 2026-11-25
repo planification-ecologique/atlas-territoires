@@ -1,0 +1,198 @@
+# Registre des indicateurs.
+#
+# Chaque indicateur est calculé par le pipeline sur la grille H3 (r8 par défaut)
+# puis exporté en tableaux binaires alignés sur la liste des cellules.
+#
+# Champs :
+#   id          identifiant stable (snake_case), utilisé comme nom de fichier
+#   label       libellé court affiché dans l'interface
+#   theme       thème (voir `themes` plus bas)
+#   role        etat | risque | opportunite | contrainte
+#               (état du territoire, risque, potentiel, protection / politique publique)
+#   unit        unité de la valeur stockée
+#   method      comment le pipeline le calcule (voir pipeline/atlas_pipeline/indicators.py)
+#   source      clé dans pipeline/sources.yaml
+#   classes     méthode de classement en 5 classes : quantiles | seuils
+#   breaks      seuils explicites si classes = seuils (4 valeurs, 5 classes)
+#   high / low  ce que "haut" et "bas" veulent dire pour les paires :
+#               un seuil de valeur (value) ou de classe (class_min / class_max)
+#   description texte d'explication affiché dans l'interface
+
+themes:
+  population: Population et société
+  foncier: Foncier et artificialisation
+  risques: Risques et climat
+  nature: Nature et biodiversité
+  agriculture: Agriculture
+  energie: Énergie
+
+indicators:
+  - id: pop_densite
+    label: Densité de population
+    theme: population
+    role: etat
+    unit: hab/km²
+    method: grid_sum_density
+    source: filosofi_200m
+    params: { field: ind }
+    classes: seuils
+    breaks: [25, 100, 500, 2000]
+    high: { value: 500 }
+    low: { value: 25 }
+    description: >
+      Nombre de résidents par km², à partir des carreaux de 200 m de l'Insee
+      (Filosofi), agrégés sur chaque hexagone.
+
+  - id: pop_habitants
+    label: Habitants
+    theme: population
+    role: etat
+    unit: hab
+    method: grid_sum
+    source: filosofi_200m
+    params: { field: ind }
+    classes: quantiles
+    weight: true   # sert de pondération "résidents concernés" dans les paires
+    description: >
+      Nombre de résidents dans l'hexagone. Sert à compter les habitants
+      concernés par une paire.
+
+  - id: pop_65plus_part
+    label: Part des 65 ans et plus
+    theme: population
+    role: etat
+    unit: part
+    method: grid_ratio
+    source: filosofi_200m
+    params: { num: [ind_65_79, ind_80p], den: [ind], min_den: 20 }
+    classes: seuils
+    breaks: [0.15, 0.22, 0.28, 0.35]
+    high: { value: 0.28 }
+    low: { value: 0.15 }
+    description: >
+      Part des résidents âgés de 65 ans ou plus. Indicateur de vulnérabilité
+      à la chaleur et aux inondations.
+
+  - id: pauvrete_part
+    label: Ménages pauvres
+    theme: population
+    role: etat
+    unit: part
+    method: grid_ratio
+    source: filosofi_200m
+    params: { num: [men_pauv], den: [men], min_den: 10 }
+    classes: seuils
+    breaks: [0.05, 0.10, 0.15, 0.25]
+    high: { value: 0.15 }
+    low: { value: 0.05 }
+    description: >
+      Part des ménages sous le seuil de pauvreté (60 % du niveau de vie médian).
+
+  - id: conso_enaf
+    label: Consommation d'espaces 2011-2024
+    theme: foncier
+    role: etat
+    unit: ha/km²
+    method: grid_areal_density
+    source: cerema_conso_carroyage
+    params: { field: naf11art24, area_km2: 1.0 }
+    classes: quantiles
+    high: { class_min: 4 }
+    low: { class_max: 2 }
+    description: >
+      Hectares d'espaces naturels, agricoles et forestiers consommés entre 2011
+      et 2024 par km², d'après les fichiers fonciers (Cerema). C'est la mesure
+      de référence de la trajectoire ZAN.
+
+  - id: conso_habitat_part
+    label: Part de la consommation due à l'habitat
+    theme: foncier
+    role: etat
+    unit: part
+    method: grid_areal_ratio
+    source: cerema_conso_carroyage
+    params: { num: art11hab24, den: naf11art24, min_den: 0.5 }
+    classes: seuils
+    breaks: [0.3, 0.5, 0.7, 0.85]
+    high: { value: 0.7 }
+    low: { value: 0.3 }
+    description: >
+      Part de la consommation d'espaces 2011-2024 destinée à l'habitat (le reste
+      va surtout aux activités et aux infrastructures).
+
+  - id: inondation_eaip
+    label: Zone inondable potentielle
+    theme: risques
+    role: risque
+    unit: part de surface
+    method: polygon_share
+    source: eaip_cours_eau
+    classes: seuils
+    breaks: [0.01, 0.1, 0.3, 0.6]
+    high: { value: 0.3 }
+    low: { value: 0.01 }
+    description: >
+      Part de l'hexagone couverte par l'enveloppe approchée des inondations
+      potentielles par débordement de cours d'eau (EAIP).
+
+  - id: natura2000
+    label: Natura 2000
+    theme: nature
+    role: contrainte
+    unit: part de surface
+    method: polygon_share
+    source: natura2000
+    classes: seuils
+    breaks: [0.01, 0.25, 0.5, 0.9]
+    high: { value: 0.5 }
+    low: { value: 0.01 }
+    description: >
+      Part de l'hexagone dans un site Natura 2000 (directive Habitats ou
+      Oiseaux).
+
+  - id: znieff1
+    label: ZNIEFF de type I
+    theme: nature
+    role: contrainte
+    unit: part de surface
+    method: polygon_share
+    source: znieff1
+    classes: seuils
+    breaks: [0.01, 0.25, 0.5, 0.9]
+    high: { value: 0.5 }
+    low: { value: 0.01 }
+    description: >
+      Part de l'hexagone dans une zone naturelle d'intérêt écologique,
+      faunistique et floristique de type I.
+
+  - id: agri_part
+    label: Terres agricoles déclarées
+    theme: agriculture
+    role: etat
+    unit: part de surface
+    method: polygon_share
+    source: rpg
+    classes: seuils
+    breaks: [0.1, 0.3, 0.5, 0.75]
+    high: { value: 0.5 }
+    low: { value: 0.1 }
+    description: >
+      Part de l'hexagone couverte par des parcelles agricoles déclarées à la PAC
+      (registre parcellaire graphique).
+
+  - id: enr_puissance
+    label: Puissance EnR installée (solaire + éolien)
+    theme: energie
+    role: opportunite
+    unit: MW/km²
+    method: commune_spread_density
+    source: odre_registre
+    params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Solaire, Eolien] } }
+    classes: quantiles
+    high: { class_min: 4 }
+    low: { class_max: 1 }
+    description: >
+      Puissance solaire et éolienne raccordée, en MW par km². Le registre
+      national est publié par commune : la puissance est répartie uniformément
+      sur les hexagones de la commune (approximation à remplacer par les
+      localisations exactes quand elles seront disponibles).
