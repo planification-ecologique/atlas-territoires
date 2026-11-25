@@ -1,0 +1,10 @@
+# Régions disponibles. `code` est le code Insee de la région.
+# `bbox` : [ouest, sud, est, nord] en WGS84, pour cadrer la carte.
+
+regions:
+  "24":
+    name: Centre-Val de Loire
+    bbox: [0.05, 46.34, 3.13, 48.95]
+    center: [1.68, 47.55]
+    zoom: 7.2
+    departements: ["18", "28", "36", "37", "41", "45"]

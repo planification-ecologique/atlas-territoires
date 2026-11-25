@@ -1,0 +1,99 @@
+# Sources de données brutes.
+#
+# Chaque source est téléchargée dans pipeline/cache/raw/<id>/ puis lue par
+# geopandas (formats vecteur) ou pandas (CSV). URL et noms de colonnes vérifiés
+# le 25/11/2026.
+#
+# Champs :
+#   url / urls   une ou plusieurs adresses ; {west} {south} {east} {north} y sont
+#                remplacés par l'emprise de la région (services WFS)
+#   filenames    noms des fichiers en cache quand l'adresse n'en donne pas
+#                ({region} = code de la région)
+#   by_id        lire le WFS objet par objet, par ce champ (géométries très lourdes)
+#   extract      fichiers à extraire de l'archive (tout si absent)
+#   layer        couche à lire (nom exact dans un GeoPackage)
+#   columns      nom de colonne attendu par le registre -> nom réel du fichier
+#                (insensible à la casse)
+
+admin_express:
+  label: IGN ADMIN EXPRESS COG 2026 (communes, régions)
+  licence: Licence Ouverte 2.0
+  page: https://geoservices.ign.fr/adminexpress
+  url: https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG/ADMIN-EXPRESS-COG_4-0__GPKG_LAMB93_FXX_2026-01-01/ADMIN-EXPRESS-COG_4-0__GPKG_LAMB93_FXX_2026-01-01.7z
+  extract: [ADE-COG_4-0_GPKG_LAMB93_FXX-ED2026-01-01.gpkg]
+  layers: { communes: commune, regions: region }
+
+filosofi_200m:
+  label: Insee, Filosofi 2021, données carroyées à 200 m
+  licence: Licence Ouverte 2.0
+  page: https://www.insee.fr/fr/statistiques/8735162?sommaire=8735243
+  url: https://www.insee.fr/fr/statistiques/fichier/8735162/Filosofi2021_carreaux_200m_gpkg.zip
+  extract: [carreaux_200m_met.gpkg]   # métropole
+  columns:
+    ind: ind
+    ind_65_79: ind_65_79
+    ind_80p: ind_80p
+    men: men
+    men_pauv: men_pauv
+
+cerema_conso_carroyage:
+  label: Cerema, consommation d'espaces NAF 2011-2025, carroyage 1 km
+  licence: Licence Ouverte 2.0
+  page: https://www.data.gouv.fr/datasets/consommation-despaces-naturels-agricoles-et-forestiers-du-1er-janvier-2011-au-1er-janvier-2025
+  url: https://static.data.gouv.fr/resources/consommation-despaces-naturels-agricoles-et-forestiers-du-1er-janvier-2011-au-1er-janvier-2025/20260511-111136/conso-carroyage.gpkg
+  doc: https://doc-datafoncier.cerema.fr/doc/conso-enaf/
+  # Flux en m², convertis en ha.
+  unit_factor: 0.0001
+  # naf11art25 = du 01/01/2011 au 01/01/2025, soit les années 2011 à 2024.
+  columns:
+    naf11art24: naf11art25
+    art11hab24: art11hab25
+
+eaip_cours_eau:
+  label: Enveloppe approchée des inondations potentielles, débordement de cours d'eau (EPRI 2011)
+  licence: Licence Ouverte 2.0
+  page: https://www.georisques.gouv.fr/
+  # Couche nationale servie par le WFS Géorisques (BRGM), par bassin hydrographique.
+  url: https://mapsref.brgm.fr/wxs/georisques/risques?service=WFS&version=2.0.0&request=GetFeature&typeName=ms:EAIP_CE_GE&bbox={south},{west},{north},{east},urn:ogc:def:crs:EPSG::4326
+  filenames: ["eaip_ce_{region}"]
+  by_id: gid
+
+natura2000:
+  label: INPN, sites Natura 2000 (SIC/ZSC et ZPS)
+  licence: Licence Ouverte 2.0
+  page: https://www.data.gouv.fr/datasets/inpn-donnees-du-programme-natura-2000
+  # Les archives inpn.mnhn.fr/docs/Shape/*.zip renvoient une page d'erreur : on
+  # passe par les mêmes couches PatriNat diffusées par la Géoplateforme.
+  urls:
+    - https://data.geopf.fr/wfs/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=patrinat_sic:sic&srsName=EPSG:4326&bbox={west},{south},{east},{north},EPSG:4326&outputFormat=application/json
+    - https://data.geopf.fr/wfs/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=patrinat_zps:zps&srsName=EPSG:4326&bbox={west},{south},{east},{north},EPSG:4326&outputFormat=application/json
+  filenames: ["sic_{region}.geojson", "zps_{region}.geojson"]
+
+znieff1:
+  label: INPN, ZNIEFF de type I
+  licence: Licence Ouverte 2.0
+  page: https://www.data.gouv.fr/datasets/inpn-donnees-du-programme-znieff
+  url: https://data.geopf.fr/wfs/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=patrinat_znieff1:znieff1&srsName=EPSG:4326&bbox={west},{south},{east},{north},EPSG:4326&outputFormat=application/json
+  filenames: ["znieff1_{region}.geojson"]
+
+rpg:
+  label: IGN, registre parcellaire graphique (RPG) 2025, parcelles
+  licence: Licence Ouverte 2.0
+  page: https://geoservices.ign.fr/rpg
+  url: https://data.geopf.fr/telechargement/download/RPG/RPG_4-0__GPKG_LAMB93_R24_2025-01-01/RPG_4-0__GPKG_LAMB93_R24_2025-01-01.7z
+  # L'archive contient aussi les îlots, les surfaces non agricoles et les zones
+  # de densité homogène : seules les parcelles comptent.
+  extract: [RPG_Parcelles.gpkg]
+  layer: RPG_Parcelles
+
+odre_registre:
+  label: ODRÉ, registre national des installations de production et de stockage d'électricité
+  licence: Licence Ouverte 2.0
+  page: https://www.data.gouv.fr/datasets/registre-national-des-installations-de-production-et-de-stockage-delectricite-au-30-09-2026
+  url: https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/registre-national-installation-production-stockage-electricite-agrege/exports/csv?delimiter=%3B
+  format: csv
+  sep: ";"
+  columns:
+    codeinseecommune: codeinseecommune
+    filiere: filiere
+    puismaxinstallee: puismaxinstallee   # en kW dans le registre

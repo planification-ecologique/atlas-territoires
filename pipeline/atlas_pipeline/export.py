@@ -1,0 +1,103 @@
+"""Écriture des fichiers statiques lus par l'application.
+
+Format (voir docs/format-donnees.md) :
+  <out>/registry.json                      indicateurs + paires + thèmes
+  <out>/<region>/manifest.json             métadonnées, seuils, statistiques
+  <out>/<region>/r<res>/cells.u64          cellules H3 triées, uint64 little-endian
+  <out>/<region>/r<res>/<id>.f32           valeurs float32 (NaN = pas de donnée)
+  <out>/<region>/r<res>/<id>.c8            classes uint8 (0 = pas de donnée, 1..5)
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from .classify import breaks_for, classify
+from .pairs import pair_mask, pair_stats
+from .registry import Registry
+
+
+def write_registry(reg: Registry, out: Path) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "themes": reg.themes,
+        "indicators": [
+            {k: v for k, v in i.items() if k not in ("params", "method")} | {
+                "source": {
+                    "id": i["source"],
+                    "label": reg.sources[i["source"]]["label"],
+                    "licence": reg.sources[i["source"]].get("licence"),
+                    "page": reg.sources[i["source"]].get("page"),
+                }
+            }
+            for i in reg.indicators
+        ],
+        "pairs": reg.pairs,
+        "regions": reg.regions,
+    }
+    (out / "registry.json").write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def write_region(
+    reg: Registry,
+    out: Path,
+    region: str,
+    res: int,
+    cells: np.ndarray,
+    areas_km2: np.ndarray,
+    values: dict[str, np.ndarray],
+    *,
+    synthetic: bool = False,
+    places: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    rdir = out / region / f"r{res}"
+    rdir.mkdir(parents=True, exist_ok=True)
+    cells.astype("<u8").tofile(rdir / "cells.u64")
+
+    indicators = {i["id"]: i for i in reg.indicators}
+    classes: dict[str, np.ndarray] = {}
+    meta_ind: dict[str, Any] = {}
+    for ind_id, v in values.items():
+        ind = indicators[ind_id]
+        v = v.astype(np.float32)
+        br = breaks_for(v, ind)
+        c = classify(v, br)
+        classes[ind_id] = c
+        v.astype("<f4").tofile(rdir / f"{ind_id}.f32")
+        c.tofile(rdir / f"{ind_id}.c8")
+        finite = v[np.isfinite(v)]
+        meta_ind[ind_id] = {
+            "breaks": br,
+            "coverage": float(len(finite) / len(v)) if len(v) else 0.0,
+            "min": float(finite.min()) if len(finite) else None,
+            "max": float(finite.max()) if len(finite) else None,
+            "mean": float(finite.mean()) if len(finite) else None,
+        }
+
+    weight = reg.weight_indicator
+    residents = values.get(weight) if weight else None
+    pair_out = {}
+    for p in reg.pairs:
+        if p["a"]["indicator"] in values and p["b"]["indicator"] in values:
+            m = pair_mask(p, values, classes, indicators)
+            pair_out[p["id"]] = pair_stats(m, areas_km2, residents)
+
+    manifest = {
+        "region": region,
+        "name": reg.regions[region]["name"],
+        "res": res,
+        "cells": int(len(cells)),
+        "area_km2": float(areas_km2.sum()),
+        "synthetic": synthetic,
+        "built": date.today().isoformat(),
+        "indicators": meta_ind,
+        "pairs": pair_out,
+        "places": places or [],
+    }
+    (out / region / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    return manifest
