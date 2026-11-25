@@ -22,24 +22,8 @@ interface Props {
 
 const SRC = "hex";
 
-const BASEMAP: maplibregl.StyleSpecification = {
-  version: 8,
-  sources: {
-    ign: {
-      type: "raster",
-      tiles: [
-        "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
-      ],
-      tileSize: 256,
-      maxzoom: 18,
-      attribution: "© IGN – Plan IGN",
-    },
-  },
-  layers: [
-    { id: "fond", type: "background", paint: { "background-color": "#f4f3ef" } },
-    { id: "ign", type: "raster", source: "ign", paint: { "raster-saturation": -0.85, "raster-opacity": 0.75 } },
-  ],
-};
+// Fond Plan IGN, style vectoriel gris officiel de la Géoplateforme.
+const BASEMAP = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/gris.json";
 
 function fillColor(colors: string[]): ExpressionSpecification {
   const match: unknown[] = ["match", ["coalesce", ["feature-state", "s"], 0]];
@@ -78,13 +62,25 @@ export function HexMap({ cells, region, view, flyTo, onHover }: Props) {
       style: BASEMAP,
       bounds: region.bbox,
       fitBoundsOptions: { padding: 24 },
-      attributionControl: { compact: true },
+      attributionControl: { compact: true, customAttribution: "© IGN – Plan IGN" },
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-right");
 
+    // Si le fond IGN ne répond pas, on garde la grille sur un fond uni.
+    const fallback = setTimeout(() => {
+      if (!ready.current) map.setStyle({ version: 8, sources: {}, layers: [{ id: "fond", type: "background", paint: { "background-color": "#f2f2f0" } }] });
+    }, 8000);
+    map.on("error", (e) => {
+      if (!ready.current && !map.isStyleLoaded() && String(e.error?.message ?? "").includes("gris.json")) {
+        clearTimeout(fallback);
+        map.setStyle({ version: 8, sources: {}, layers: [{ id: "fond", type: "background", paint: { "background-color": "#f2f2f0" } }] });
+      }
+    });
+
     map.on("load", () => {
+      clearTimeout(fallback);
       const features = cells.map((h, i) => ({
         type: "Feature" as const,
         id: i,
@@ -92,19 +88,21 @@ export function HexMap({ cells, region, view, flyTo, onHover }: Props) {
         geometry: { type: "Polygon" as const, coordinates: [cellToBoundary(h, true)] },
       }));
       map.addSource(SRC, { type: "geojson", data: { type: "FeatureCollection", features } });
+      // Les hexagones passent sous les libellés du fond pour garder les noms lisibles.
+      const beforeId = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
       map.addLayer({
         id: "hex-fill",
         type: "fill",
         source: SRC,
-        paint: { "fill-color": "rgba(0,0,0,0)", "fill-opacity": 0.82, "fill-antialias": false },
-      });
+        paint: { "fill-color": "rgba(0,0,0,0)", "fill-opacity": 0.78, "fill-antialias": false },
+      }, beforeId);
       map.addLayer({
         id: "hex-line",
         type: "line",
         source: SRC,
         minzoom: 10,
         paint: { "line-color": "rgba(40,40,40,0.25)", "line-width": 0.5 },
-      });
+      }, beforeId);
       ready.current = true;
       if (pending.current) apply(pending.current);
     });
@@ -120,6 +118,7 @@ export function HexMap({ cells, region, view, flyTo, onHover }: Props) {
     });
 
     return () => {
+      clearTimeout(fallback);
       ready.current = false;
       applied.current = null;
       map.remove();
