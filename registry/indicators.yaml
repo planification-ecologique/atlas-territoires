@@ -189,7 +189,11 @@ indicators:
     source: odre_registre
     params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Solaire, Eolien] } }
     classes: quantiles
-    high: { class_min: 4 }
+    # La puissance communale est étalée sur tous les hexagones de la commune :
+    # presque tout le territoire a une valeur non nulle. "Élevé" retient donc
+    # environ les 10 % d'hexagones les plus équipés du Centre-Val de Loire
+    # (90e centile = 0,215 MW/km² en novembre 2026), à revoir par région.
+    high: { value: 0.21 }
     low: { class_max: 1 }
     description: >
       Puissance solaire et éolienne raccordée, en MW par km². Le registre

@@ -275,7 +275,7 @@
    },
    "classes": "quantiles",
    "high": {
-    "class_min": 4
+    "value": 0.21
    },
    "low": {
     "class_max": 1

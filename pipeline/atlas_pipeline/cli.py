@@ -29,6 +29,10 @@ def main(argv: list[str] | None = None) -> None:
     b.add_argument("--only", nargs="*", help="limiter à ces indicateurs")
     b.add_argument("--strict", action="store_true", help="échouer si une source manque")
 
+    rc = sub.add_parser("reclassify", help="recalcule classes et paires depuis les valeurs déjà construites (après un changement de seuils)")
+    rc.add_argument("--region", default="24")
+    rc.add_argument("--out", type=Path, default=DEFAULT_OUT)
+
     r = sub.add_parser("report", help="affiche les paires d'une région déjà construite")
     r.add_argument("--region", default="24")
     r.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -46,9 +50,33 @@ def main(argv: list[str] | None = None) -> None:
         from .build import build_region
         m = build_region(reg, args.region, args.res, args.out, args.only, skip_missing=not args.strict)
         _summary(reg, m)
+    elif args.cmd == "reclassify":
+        m = _reclassify(reg, args.region, args.out)
+        _summary(reg, m)
     elif args.cmd == "report":
         m = json.loads((args.out / args.region / "manifest.json").read_text(encoding="utf-8"))
         _summary(reg, m)
+
+
+def _reclassify(reg, region: str, out: Path) -> dict:
+    import numpy as np
+
+    from . import grid
+    from .export import write_region, write_registry
+
+    old = json.loads((out / region / "manifest.json").read_text(encoding="utf-8"))
+    rdir = out / region / f"r{old['res']}"
+    cells = np.fromfile(rdir / "cells.u64", dtype="<u8")
+    values = {
+        i["id"]: np.fromfile(rdir / f"{i['id']}.f32", dtype="<f4")
+        for i in reg.indicators
+        if (rdir / f"{i['id']}.f32").exists()
+    }
+    write_registry(reg, out)
+    return write_region(
+        reg, out, region, old["res"], cells, grid.cell_areas_km2(cells), values,
+        synthetic=old.get("synthetic", False), places=old.get("places"),
+    )
 
 
 def _summary(reg, m) -> None:
