@@ -71,6 +71,12 @@ pytest
 nécessaire). L'EAIP est lue objet par objet sur le WFS Géorisques, lent (compter une demi-heure). Une source sans URL peut être déposée à la main dans `pipeline/cache/raw/<id>/`. `demo` écrase les données versionnées :
 utiliser `--out` pour l'écrire ailleurs. Un indicateur dont la source manque est ignoré, et l'application n'affiche que ce qui a été construit.
 
+## Déploiement
+
+Chaque push sur `main` déploie l'application sur GitHub Pages, une fois les tests passés (job `deploy` de
+`.github/workflows/ci.yml`, relançable à la main depuis l'onglet Actions). Prérequis, une seule fois :
+Settings > Pages > Source = **GitHub Actions**.
+
 ## Méthodes d'agrégation
 
 | Méthode | Usage | Exemple |
