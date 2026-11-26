@@ -1,5 +1,11 @@
 [
  {
+  "code": "27",
+  "name": "Bourgogne-Franche-Comté",
+  "cells": 70291,
+  "synthetic": false
+ },
+ {
   "code": "53",
   "name": "Bretagne",
   "cells": 38628,
