@@ -1,5 +1,11 @@
 [
  {
+  "code": "84",
+  "name": "Auvergne-Rhône-Alpes",
+  "cells": 101333,
+  "synthetic": false
+ },
+ {
   "code": "27",
   "name": "Bourgogne-Franche-Comté",
   "cells": 70291,
