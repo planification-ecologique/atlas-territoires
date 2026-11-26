@@ -120,3 +120,6 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: 
   .mapwrap { order: 1; }
   .legend { display: none; }
 }
+
+.region { display: block; width: 100%; margin: 4px 0 2px; padding: 2px 0; font: inherit; font-size: 22px; font-weight: 700; color: var(--ink); background: transparent; border: 0; border-bottom: 1px dashed var(--line); cursor: pointer; }
+.region:focus { outline: 2px solid var(--accent); outline-offset: 2px; }

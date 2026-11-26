@@ -137,6 +137,9 @@ def fetch(
     names: list[str | None] = list(source.get("filenames") or [None] * len(urls))
     if len(names) != len(urls):
         raise ValueError(f"source '{source_id}' : autant de `filenames` que d'URL sont attendus")
+    if region is not None:
+        # {region} : code Insee de la région (archives régionales, ex. RPG).
+        urls = [u.replace("{region}", region) for u in urls]
     if any("{west}" in u for u in urls):
         if bbox is None or region is None:
             raise ValueError(f"source '{source_id}' : l'URL demande une région et son emprise")

@@ -1,4 +1,4 @@
-import type { Layer, Manifest, Registry } from "./types";
+import type { Layer, Manifest, RegionEntry, Registry } from "./types";
 
 const BASE = `${import.meta.env.BASE_URL}data`;
 
@@ -10,6 +10,15 @@ async function fetchOk(url: string): Promise<Response> {
 
 export async function loadRegistry(): Promise<Registry> {
   return (await fetchOk(`${BASE}/registry.json`)).json();
+}
+
+/** Régions déjà construites (data/index.json). */
+export async function loadIndex(): Promise<RegionEntry[]> {
+  try {
+    return await (await fetchOk(`${BASE}/index.json`)).json();
+  } catch {
+    return [];
+  }
 }
 
 export async function loadManifest(region: string): Promise<Manifest> {

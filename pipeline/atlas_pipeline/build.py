@@ -68,7 +68,7 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
         {"name": n, "lng": float(g.centroid.x), "lat": float(g.centroid.y)}
         for n, g in zip(communes["nom"], communes.geometry)
     ]
-    manifest = write_region(reg, out, region, res, cells, areas, values, places=places)
+    manifest = write_region(reg, out, region, res, cells, areas, values, places=places, bbox=list(region_geom.bounds))
     (out / region / "communes.json").write_text(
         __import__("json").dumps({"codes": communes["code"].tolist(), "noms": communes["nom"].tolist()}, ensure_ascii=False),
         encoding="utf-8",

@@ -33,6 +33,9 @@ def main(argv: list[str] | None = None) -> None:
     rc.add_argument("--region", default="24")
     rc.add_argument("--out", type=Path, default=DEFAULT_OUT)
 
+    ix = sub.add_parser("index", help="réécrit data/index.json (liste des régions construites)")
+    ix.add_argument("--out", type=Path, default=DEFAULT_OUT)
+
     r = sub.add_parser("report", help="affiche les paires d'une région déjà construite")
     r.add_argument("--region", default="24")
     r.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -53,6 +56,10 @@ def main(argv: list[str] | None = None) -> None:
     elif args.cmd == "reclassify":
         m = _reclassify(reg, args.region, args.out)
         _summary(reg, m)
+    elif args.cmd == "index":
+        from .export import write_index
+        for r in write_index(reg, args.out):
+            print(f"  {r['code']} {r['name']} ({r['cells']} hexagones)")
     elif args.cmd == "report":
         m = json.loads((args.out / args.region / "manifest.json").read_text(encoding="utf-8"))
         _summary(reg, m)
@@ -75,7 +82,7 @@ def _reclassify(reg, region: str, out: Path) -> dict:
     write_registry(reg, out)
     return write_region(
         reg, out, region, old["res"], cells, grid.cell_areas_km2(cells), values,
-        synthetic=old.get("synthetic", False), places=old.get("places"),
+        synthetic=old.get("synthetic", False), places=old.get("places"), bbox=old.get("bbox"),
     )
 
 

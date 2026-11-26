@@ -1,16 +1,30 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cellArea } from "h3-js";
 import { HexMap, type MapView } from "./components/HexMap";
-import { loadCells, loadLayer, loadManifest, loadRegistry } from "./lib/data";
+import { loadCells, loadIndex, loadLayer, loadManifest, loadRegistry } from "./lib/data";
 import { describeEnd, endMask, overlap, ruleFor, type Overlap } from "./lib/pairs";
 import { fmtHa, fmtInt, fmtPct, fmtValue, PAIR_COLORS, PALETTES, ROLE_LABELS } from "./lib/format";
-import type { End, Indicator, Layer, Manifest, Pair, Registry } from "./lib/types";
+import type { End, Indicator, Layer, Manifest, Pair, RegionEntry, Registry } from "./lib/types";
 
-const REGION = new URLSearchParams(location.search).get("region") ?? "24";
+const DEFAULT_REGION = "24";
+
+function pickRegion(index: RegionEntry[]): string {
+  const asked = new URLSearchParams(location.search).get("region");
+  if (asked && (!index.length || index.some((r) => r.code === asked))) return asked;
+  return index.some((r) => r.code === DEFAULT_REGION) ? DEFAULT_REGION : index[0]?.code ?? DEFAULT_REGION;
+}
+
+function goToRegion(code: string) {
+  const url = new URL(location.href);
+  url.searchParams.set("region", code);
+  location.assign(url.toString());
+}
 
 type Tab = "paires" | "indicateurs" | "composer";
 
 interface Loaded {
+  region: string;
+  index: RegionEntry[];
   registry: Registry;
   manifest: Manifest;
   cells: string[];
@@ -37,14 +51,15 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const registry = await loadRegistry();
+      const [registry, index] = await Promise.all([loadRegistry(), loadIndex()]);
+      const REGION = pickRegion(index);
       const manifest = await loadManifest(REGION);
       const cells = await loadCells(REGION, manifest.res);
       const areas = Float64Array.from(cells, (c) => cellArea(c, "km2"));
       const ids = registry.indicators.map((i) => i.id).filter((id) => id in manifest.indicators);
       const loaded = await Promise.all(ids.map((id) => loadLayer(REGION, manifest.res, id)));
       const layers = Object.fromEntries(ids.map((id, k) => [id, loaded[k]]));
-      setData({ registry, manifest, cells, areas, layers });
+      setData({ region: REGION, index, registry, manifest, cells, areas, layers });
       const first = registry.pairs.find((p) => p.id in manifest.pairs);
       setPairId(first?.id ?? null);
     })().catch((e) => setError(String(e)));
@@ -115,14 +130,22 @@ export default function App() {
   if (!data) return <div className="splash">Chargement de la grille…</div>;
 
   const { registry, manifest } = data;
-  const region = registry.regions[REGION];
+  const region = { name: manifest.name, bbox: manifest.bbox ?? registry.regions[data.region].bbox };
 
   return (
     <div className="app">
       <aside className="panel">
         <header>
           <p className="eyebrow">Atlas des territoires · prototype</p>
-          <h1>{manifest.name}</h1>
+          {data.index.length > 1 ? (
+            <select className="region" value={data.region} onChange={(e) => goToRegion(e.target.value)} aria-label="Région">
+              {data.index.map((r) => (
+                <option key={r.code} value={r.code}>{r.name}</option>
+              ))}
+            </select>
+          ) : (
+            <h1>{manifest.name}</h1>
+          )}
           <p className="muted">
             {fmtInt(manifest.cells)} hexagones H3 (résolution {manifest.res}, ≈ 74 ha) · {fmtInt(manifest.area_km2)} km²
           </p>

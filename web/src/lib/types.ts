@@ -39,8 +39,13 @@ export interface Pair {
 export interface RegionInfo {
   name: string;
   bbox: [number, number, number, number];
-  center: [number, number];
-  zoom: number;
+}
+
+export interface RegionEntry {
+  code: string;
+  name: string;
+  cells: number;
+  synthetic: boolean;
 }
 
 export interface Registry {
@@ -76,6 +81,7 @@ export interface Manifest {
   indicators: Record<string, IndicatorMeta>;
   pairs: Record<string, PairStats>;
   places: { name: string; lng: number; lat: number }[];
+  bbox?: [number, number, number, number];
 }
 
 /** Une couche chargée : valeurs et classes alignées sur la liste des cellules. */
