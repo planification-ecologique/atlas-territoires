@@ -54,6 +54,12 @@
   "synthetic": false
  },
  {
+  "code": "75",
+  "name": "Nouvelle-Aquitaine",
+  "cells": 121425,
+  "synthetic": false
+ },
+ {
   "code": "76",
   "name": "Occitanie",
   "cells": 104387,
