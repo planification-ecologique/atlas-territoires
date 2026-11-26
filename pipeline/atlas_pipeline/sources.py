@@ -6,6 +6,7 @@ import json
 import re
 import shutil
 import subprocess
+import time
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -20,6 +21,8 @@ from pyproj import Transformer
 from .registry import PIPELINE_DIR
 
 CACHE = PIPELINE_DIR / "cache" / "raw"
+RETRIES = 4         # nouveaux essais après une erreur réseau ou serveur
+RETRY_WAIT = 30     # secondes, doublées à chaque essai
 VECTOR_EXT = (".gpkg", ".shp", ".geojson", ".fgb", ".parquet", ".gml")
 
 
@@ -33,16 +36,27 @@ def _download(url: str, dest_dir: Path, name: str | None = None) -> Path:
     if dest.exists() and dest.stat().st_size > 0:
         return dest
     print(f"  téléchargement {url}")
-    with requests.get(url, stream=True, timeout=600) as r:
-        r.raise_for_status()
-        # Certains serveurs (INPN) répondent une page d'erreur HTML avec un code 200.
-        if "text/html" in r.headers.get("content-type", ""):
-            raise RuntimeError(f"{url} renvoie une page HTML au lieu de données")
-        tmp = dest.with_suffix(dest.suffix + ".part")
-        with open(tmp, "wb") as f:
-            for chunk in r.iter_content(1 << 20):
-                f.write(chunk)
-        tmp.rename(dest)
+    tmp = dest.with_suffix(dest.suffix + ".part")
+    for attempt in range(RETRIES + 1):
+        try:
+            with requests.get(url, stream=True, timeout=600) as r:
+                r.raise_for_status()
+                # Certains serveurs (INPN) répondent une page d'erreur HTML avec un code 200.
+                if "text/html" in r.headers.get("content-type", ""):
+                    raise RuntimeError(f"{url} renvoie une page HTML au lieu de données")
+                with open(tmp, "wb") as f:
+                    for chunk in r.iter_content(1 << 20):
+                        f.write(chunk)
+            break
+        except (requests.ConnectionError, requests.Timeout, requests.HTTPError, requests.exceptions.ChunkedEncodingError) as e:
+            # Les WFS (Géorisques surtout) expirent ou renvoient des 5xx de temps à autre.
+            status = getattr(getattr(e, "response", None), "status_code", None)
+            if attempt == RETRIES or (status is not None and status < 500):
+                raise
+            wait = RETRY_WAIT * 2**attempt
+            print(f"  nouvel essai dans {wait} s ({e.__class__.__name__})")
+            time.sleep(wait)
+    tmp.rename(dest)
     if dest.suffix == ".geojson":
         _check_complete(dest)
     return dest

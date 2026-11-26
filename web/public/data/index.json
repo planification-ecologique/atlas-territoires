@@ -1,8 +1,26 @@
 [
  {
+  "code": "53",
+  "name": "Bretagne",
+  "cells": 38628,
+  "synthetic": false
+ },
+ {
   "code": "24",
   "name": "Centre-Val de Loire",
   "cells": 58603,
+  "synthetic": false
+ },
+ {
+  "code": "94",
+  "name": "Corse",
+  "cells": 11369,
+  "synthetic": false
+ },
+ {
+  "code": "11",
+  "name": "Île-de-France",
+  "cells": 18319,
   "synthetic": false
  }
 ]
