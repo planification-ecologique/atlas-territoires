@@ -18,6 +18,12 @@
   "synthetic": false
  },
  {
+  "code": "52",
+  "name": "Pays de la Loire",
+  "cells": 46401,
+  "synthetic": false
+ },
+ {
   "code": "11",
   "name": "Île-de-France",
   "cells": 18319,
