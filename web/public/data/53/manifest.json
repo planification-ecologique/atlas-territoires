@@ -79,6 +79,18 @@
    "max": 1.0,
    "mean": 0.7308922410011292
   },
+  "inondation_eaip": {
+   "breaks": [
+    0.01,
+    0.1,
+    0.3,
+    0.6
+   ],
+   "coverage": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "mean": 0.12433262914419174
+  },
   "natura2000": {
    "breaks": [
     0.01,
@@ -103,6 +115,18 @@
    "max": 1.0,
    "mean": 0.02667606621980667
   },
+  "agri_part": {
+   "breaks": [
+    0.1,
+    0.3,
+    0.5,
+    0.75
+   ],
+   "coverage": 1.0,
+   "min": 0.0,
+   "max": 0.9819338321685791,
+   "mean": 0.5796645283699036
+  },
   "enr_puissance": {
    "breaks": [
     0.017406466603279113,
@@ -117,6 +141,12 @@
   }
  },
  "pairs": {
+  "conso_x_agri": {
+   "cells": 9299,
+   "hectares": 658511.5530897104,
+   "share": 0.24022615529799757,
+   "residents": 507208.5
+  },
   "conso_x_natura": {
    "cells": 308,
    "hectares": 21935.80715068079,
@@ -129,11 +159,41 @@
    "share": 0.0025215434273951533,
    "residents": 4034.5
   },
+  "conso_x_inondation": {
+   "cells": 1557,
+   "hectares": 110107.36734955171,
+   "share": 0.04016735834665553,
+   "residents": 241905.0
+  },
   "conso_habitat_x_densite_basse": {
    "cells": 1393,
    "hectares": 98806.48992231784,
    "share": 0.036044778684839816,
    "residents": 12996.5
+  },
+  "densite_x_inondation": {
+   "cells": 194,
+   "hectares": 13697.503031454255,
+   "share": 0.00499687283387821,
+   "residents": 231144.0
+  },
+  "ages_x_inondation": {
+   "cells": 451,
+   "hectares": 32043.02312523872,
+   "share": 0.011689350343793084,
+   "residents": 68602.5
+  },
+  "pauvrete_x_inondation": {
+   "cells": 365,
+   "hectares": 25829.443531713132,
+   "share": 0.009422625744373038,
+   "residents": 122132.5
+  },
+  "inondation_x_densite_basse": {
+   "cells": 2236,
+   "hectares": 158396.85851456292,
+   "share": 0.05778344837489975,
+   "residents": 14968.0
   },
   "natura_x_conso_basse": {
    "cells": 760,
@@ -146,6 +206,12 @@
    "hectares": 4481.1029915981435,
    "share": 0.0016347141338905655,
    "residents": 1791.0
+  },
+  "enr_x_agri": {
+   "cells": 4014,
+   "hectares": 284859.23567574617,
+   "share": 0.10391714263240609,
+   "residents": 95635.5
   },
   "enr_x_densite_basse": {
    "cells": 3030,
