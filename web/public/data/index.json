@@ -54,6 +54,12 @@
   "synthetic": false
  },
  {
+  "code": "93",
+  "name": "Provence-Alpes-Côte d'Azur",
+  "cells": 43547,
+  "synthetic": false
+ },
+ {
   "code": "11",
   "name": "Île-de-France",
   "cells": 18319,
