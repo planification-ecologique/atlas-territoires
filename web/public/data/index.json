@@ -24,6 +24,12 @@
   "synthetic": false
  },
  {
+  "code": "44",
+  "name": "Grand Est",
+  "cells": 85925,
+  "synthetic": false
+ },
+ {
   "code": "32",
   "name": "Hauts-de-France",
   "cells": 49241,
