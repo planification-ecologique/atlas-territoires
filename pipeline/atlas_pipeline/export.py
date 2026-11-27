@@ -11,6 +11,7 @@ Format (voir docs/format-donnees.md) :
 from __future__ import annotations
 
 import json
+import unicodedata
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -54,6 +55,7 @@ def write_region(
     *,
     synthetic: bool = False,
     places: list[dict[str, Any]] | None = None,
+    bbox: list[float] | None = None,
 ) -> dict[str, Any]:
     rdir = out / region / f"r{res}"
     rdir.mkdir(parents=True, exist_ok=True)
@@ -98,6 +100,22 @@ def write_region(
         "indicators": meta_ind,
         "pairs": pair_out,
         "places": places or [],
+        "bbox": [round(float(x), 4) for x in (bbox or reg.regions[region]["bbox"])],
     }
     (out / region / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_index(reg, out)
     return manifest
+
+
+def write_index(reg: Registry, out: Path) -> list[dict[str, Any]]:
+    """Liste des régions construites, lue par l'application pour son sélecteur."""
+    items = []
+    for code in reg.regions:
+        mf = out / code / "manifest.json"
+        if mf.exists():
+            m = json.loads(mf.read_text(encoding="utf-8"))
+            items.append({"code": code, "name": m["name"], "cells": m["cells"], "synthetic": m.get("synthetic", False)})
+    # Ordre alphabétique sans tenir compte des accents (sinon « Île-de-France » passe après « Provence »).
+    items.sort(key=lambda r: unicodedata.normalize("NFD", r["name"]).encode("ascii", "ignore").decode().lower())
+    (out / "index.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+    return items

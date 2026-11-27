@@ -80,7 +80,7 @@ rpg:
   label: IGN, registre parcellaire graphique (RPG) 2025, parcelles
   licence: Licence Ouverte 2.0
   page: https://geoservices.ign.fr/rpg
-  url: https://data.geopf.fr/telechargement/download/RPG/RPG_4-0__GPKG_LAMB93_R24_2025-01-01/RPG_4-0__GPKG_LAMB93_R24_2025-01-01.7z
+  url: https://data.geopf.fr/telechargement/download/RPG/RPG_4-0__GPKG_LAMB93_R{region}_2025-01-01/RPG_4-0__GPKG_LAMB93_R{region}_2025-01-01.7z
   # L'archive contient aussi les îlots, les surfaces non agricoles et les zones
   # de densité homogène : seules les parcelles comptent.
   extract: [RPG_Parcelles.gpkg]

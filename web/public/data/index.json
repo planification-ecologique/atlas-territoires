@@ -1,0 +1,80 @@
+[
+ {
+  "code": "84",
+  "name": "Auvergne-Rhône-Alpes",
+  "cells": 101333,
+  "synthetic": false
+ },
+ {
+  "code": "27",
+  "name": "Bourgogne-Franche-Comté",
+  "cells": 70291,
+  "synthetic": false
+ },
+ {
+  "code": "53",
+  "name": "Bretagne",
+  "cells": 38628,
+  "synthetic": false
+ },
+ {
+  "code": "24",
+  "name": "Centre-Val de Loire",
+  "cells": 58603,
+  "synthetic": false
+ },
+ {
+  "code": "94",
+  "name": "Corse",
+  "cells": 11369,
+  "synthetic": false
+ },
+ {
+  "code": "44",
+  "name": "Grand Est",
+  "cells": 85925,
+  "synthetic": false
+ },
+ {
+  "code": "32",
+  "name": "Hauts-de-France",
+  "cells": 49241,
+  "synthetic": false
+ },
+ {
+  "code": "11",
+  "name": "Île-de-France",
+  "cells": 18319,
+  "synthetic": false
+ },
+ {
+  "code": "28",
+  "name": "Normandie",
+  "cells": 44349,
+  "synthetic": false
+ },
+ {
+  "code": "75",
+  "name": "Nouvelle-Aquitaine",
+  "cells": 121425,
+  "synthetic": false
+ },
+ {
+  "code": "76",
+  "name": "Occitanie",
+  "cells": 104387,
+  "synthetic": false
+ },
+ {
+  "code": "52",
+  "name": "Pays de la Loire",
+  "cells": 46401,
+  "synthetic": false
+ },
+ {
+  "code": "93",
+  "name": "Provence-Alpes-Côte d'Azur",
+  "cells": 43547,
+  "synthetic": false
+ }
+]
