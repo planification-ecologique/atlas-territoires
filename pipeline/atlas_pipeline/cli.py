@@ -66,18 +66,16 @@ def main(argv: list[str] | None = None) -> None:
 
 
 def _reclassify(reg, region: str, out: Path) -> dict:
-    import numpy as np
-
     from . import grid
-    from .export import write_region, write_registry
+    from .export import read_array, read_layer, write_region, write_registry
 
     old = json.loads((out / region / "manifest.json").read_text(encoding="utf-8"))
     rdir = out / region / f"r{old['res']}"
-    cells = np.fromfile(rdir / "cells.u64", dtype="<u8")
+    cells = read_array(rdir / "cells.json")
     values = {
-        i["id"]: np.fromfile(rdir / f"{i['id']}.f32", dtype="<f4")
+        i["id"]: read_layer(rdir / f"{i['id']}.json")[0].copy()
         for i in reg.indicators
-        if (rdir / f"{i['id']}.f32").exists()
+        if (rdir / f"{i['id']}.json").exists()
     }
     write_registry(reg, out)
     return write_region(

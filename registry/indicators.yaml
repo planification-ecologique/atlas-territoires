@@ -190,10 +190,11 @@ indicators:
     params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Solaire, Eolien] } }
     classes: quantiles
     # La puissance communale est étalée sur tous les hexagones de la commune :
-    # presque tout le territoire a une valeur non nulle. "Élevé" retient donc
-    # environ les 10 % d'hexagones les plus équipés du Centre-Val de Loire
-    # (90e centile = 0,215 MW/km² en novembre 2026), à revoir par région.
-    high: { value: 0.21 }
+    # presque tout le territoire a une valeur non nulle. "Élevé" retient les
+    # 10 % d'hexagones les plus équipés de la métropole (90e centile national
+    # = 0,22 MW/km², registre ODRÉ 30/09/2026). Seuil commun à toutes les
+    # régions : de 3 % (Corse) à 16 % (Pays de la Loire) des hexagones.
+    high: { value: 0.22 }
     low: { class_max: 1 }
     description: >
       Puissance solaire et éolienne raccordée, en MW par km². Le registre

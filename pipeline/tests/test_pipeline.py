@@ -8,6 +8,7 @@ from shapely.geometry import Point, box
 
 from atlas_pipeline import grid
 from atlas_pipeline.classify import breaks_for, classify, end_mask
+from atlas_pipeline.export import read_array, read_layer
 from atlas_pipeline.indicators import GridContext, METHODS
 from atlas_pipeline.pairs import pair_mask, pair_stats
 from atlas_pipeline.registry import load_registry
@@ -102,11 +103,11 @@ def test_demo_export(tmp_path):
     reg = load_registry()
     m = build_demo(reg, tmp_path, res=6)  # résolution grossière pour aller vite
     n = m["cells"]
-    cells = np.fromfile(tmp_path / "24" / "r6" / "cells.u64", dtype="<u8")
+    cells = read_array(tmp_path / "24" / "r6" / "cells.json")
     assert len(cells) == n and m["synthetic"] is True
     for ind in reg.indicators:
-        assert len(np.fromfile(tmp_path / "24" / "r6" / f"{ind['id']}.f32", dtype="<f4")) == n
-        assert len(np.fromfile(tmp_path / "24" / "r6" / f"{ind['id']}.c8", dtype="u1")) == n
+        v, c = read_layer(tmp_path / "24" / "r6" / f"{ind['id']}.json")
+        assert len(v) == n and len(c) == n
     registry = json.loads((tmp_path / "registry.json").read_text())
     assert {p["id"] for p in registry["pairs"]} == set(m["pairs"])
 

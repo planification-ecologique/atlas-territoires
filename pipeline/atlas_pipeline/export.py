@@ -3,13 +3,17 @@
 Format (voir docs/format-donnees.md) :
   <out>/registry.json                      indicateurs + paires + thèmes
   <out>/<region>/manifest.json             métadonnées, seuils, statistiques
-  <out>/<region>/r<res>/cells.u64          cellules H3 triées, uint64 little-endian
-  <out>/<region>/r<res>/<id>.f32           valeurs float32 (NaN = pas de donnée)
-  <out>/<region>/r<res>/<id>.c8            classes uint8 (0 = pas de donnée, 1..5)
+  <out>/<region>/r<res>/cells.json         cellules H3 triées, uint64 little-endian
+  <out>/<region>/r<res>/<id>.json          valeurs float32 (NaN = pas de donnée)
+                                           et classes uint8 (0 = pas de donnée, 1..5)
+
+Les tableaux sont des octets little-endian encodés en base64 dans du JSON : les
+proxys d'administration (postes SPM) refusent les fichiers binaires (.u64, .f32).
 """
 
 from __future__ import annotations
 
+import base64
 import json
 import unicodedata
 from datetime import date
@@ -21,6 +25,32 @@ import numpy as np
 from .classify import breaks_for, classify
 from .pairs import pair_mask, pair_stats
 from .registry import Registry
+
+
+def pack(a: np.ndarray, dtype: str) -> dict[str, Any]:
+    """Tableau numpy -> {dtype, length, base64} (octets little-endian)."""
+    a = np.ascontiguousarray(a, dtype=dtype)
+    return {"dtype": dtype, "length": int(len(a)), "base64": base64.b64encode(a.tobytes()).decode("ascii")}
+
+
+def unpack(d: dict[str, Any]) -> np.ndarray:
+    a = np.frombuffer(base64.b64decode(d["base64"]), dtype=d["dtype"])
+    if len(a) != d["length"]:
+        raise ValueError(f"tableau tronqué : {len(a)} valeurs sur {d['length']}")
+    return a
+
+
+def write_array(path: Path, a: np.ndarray, dtype: str) -> None:
+    path.write_text(json.dumps(pack(a, dtype)), encoding="utf-8")
+
+
+def read_array(path: Path) -> np.ndarray:
+    return unpack(json.loads(path.read_text(encoding="utf-8")))
+
+
+def read_layer(path: Path) -> tuple[np.ndarray, np.ndarray]:
+    d = json.loads(path.read_text(encoding="utf-8"))
+    return unpack(d["values"]), unpack(d["classes"])
 
 
 def write_registry(reg: Registry, out: Path) -> None:
@@ -59,7 +89,7 @@ def write_region(
 ) -> dict[str, Any]:
     rdir = out / region / f"r{res}"
     rdir.mkdir(parents=True, exist_ok=True)
-    cells.astype("<u8").tofile(rdir / "cells.u64")
+    write_array(rdir / "cells.json", cells, "<u8")
 
     indicators = {i["id"]: i for i in reg.indicators}
     classes: dict[str, np.ndarray] = {}
@@ -70,8 +100,8 @@ def write_region(
         br = breaks_for(v, ind)
         c = classify(v, br)
         classes[ind_id] = c
-        v.astype("<f4").tofile(rdir / f"{ind_id}.f32")
-        c.tofile(rdir / f"{ind_id}.c8")
+        layer = {"values": pack(v, "<f4"), "classes": pack(c, "u1")}
+        (rdir / f"{ind_id}.json").write_text(json.dumps(layer), encoding="utf-8")
         finite = v[np.isfinite(v)]
         meta_ind[ind_id] = {
             "breaks": br,

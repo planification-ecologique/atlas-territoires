@@ -3,9 +3,9 @@
  "name": "Pays de la Loire",
  "res": 8,
  "cells": 46401,
- "area_km2": 32321.180844896604,
+ "area_km2": 32321.180844896808,
  "synthetic": false,
- "built": "2026-11-26",
+ "built": "2026-11-27",
  "indicators": {
   "pop_densite": {
    "breaks": [
@@ -143,81 +143,81 @@
  "pairs": {
   "conso_x_agri": {
    "cells": 12198,
-   "hectares": 850091.5869752255,
-   "share": 0.2630137775765862,
+   "hectares": 850091.5869752226,
+   "share": 0.2630137775765837,
    "residents": 520912.5
   },
   "conso_x_natura": {
    "cells": 908,
-   "hectares": 63706.36101076102,
-   "share": 0.019710406410111105,
+   "hectares": 63706.36101076178,
+   "share": 0.019710406410111212,
    "residents": 62741.5
   },
   "conso_x_znieff": {
    "cells": 409,
-   "hectares": 28832.257527640475,
-   "share": 0.008920545838347048,
+   "hectares": 28832.257527641024,
+   "share": 0.008920545838347163,
    "residents": 26628.0
   },
   "conso_x_inondation": {
    "cells": 2787,
-   "hectares": 194664.96413749445,
-   "share": 0.06022829582608871,
+   "hectares": 194664.96413749404,
+   "share": 0.060228295826088206,
    "residents": 438255.5
   },
   "conso_habitat_x_densite_basse": {
    "cells": 1993,
-   "hectares": 138723.73473664012,
-   "share": 0.04292037948809785,
+   "hectares": 138723.73473664615,
+   "share": 0.04292037948809944,
    "residents": 15882.0
   },
   "densite_x_inondation": {
    "cells": 437,
-   "hectares": 30541.327745045375,
-   "share": 0.009449322997079712,
+   "hectares": 30541.327745042956,
+   "share": 0.009449322997078903,
    "residents": 426391.0
   },
   "ages_x_inondation": {
    "cells": 625,
-   "hectares": 43679.57006997934,
-   "share": 0.013514224705956614,
+   "hectares": 43679.57006997571,
+   "share": 0.013514224705955405,
    "residents": 122591.0
   },
   "pauvrete_x_inondation": {
    "cells": 486,
-   "hectares": 33900.02485623576,
-   "share": 0.010488485869039173,
+   "hectares": 33900.02485623334,
+   "share": 0.010488485869038357,
    "residents": 227402.5
   },
   "inondation_x_densite_basse": {
    "cells": 4548,
-   "hectares": 317764.90539926727,
-   "share": 0.09831475741067833,
+   "hectares": 317764.90539927065,
+   "share": 0.09831475741067874,
    "residents": 20909.0
   },
   "natura_x_conso_basse": {
    "cells": 2301,
-   "hectares": 161420.79591331497,
-   "share": 0.04994272848134592,
+   "hectares": 161420.79591331925,
+   "share": 0.049942728481346926,
    "residents": 19247.0
   },
   "enr_x_natura": {
-   "cells": 546,
-   "hectares": 38533.21706297171,
-   "share": 0.011921970687854977,
-   "residents": 18062.0
+   "cells": 534,
+   "hectares": 37692.53279000189,
+   "share": 0.011661867482775824,
+   "residents": 17894.0
   },
   "enr_x_agri": {
-   "cells": 5901,
-   "hectares": 413118.8325561787,
-   "share": 0.1278167510459039,
-   "residents": 149595.0
+   "cells": 5582,
+   "hectares": 390709.12048331246,
+   "share": 0.12088330632418758,
+   "residents": 138469.0
   },
   "enr_x_densite_basse": {
-   "cells": 4691,
-   "hectares": 327991.57110605994,
-   "share": 0.10147883293003158,
-   "residents": 28565.0
+   "cells": 4467,
+   "hectares": 312254.4288282538,
+   "share": 0.09660984551483541,
+   "residents": 27138.0
   }
  },
  "places": [
