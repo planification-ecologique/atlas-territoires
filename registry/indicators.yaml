@@ -211,10 +211,11 @@ indicators:
     source: odre_registre
     params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Hydraulique] } }
     classes: quantiles
-    # Peu de communes ont une installation : les classes 2 à 5 découpent les
-    # seules valeurs positives. "Élevé" = classe 4 et plus (au-dessus du tiers
-    # supérieur des communes équipées), à recaler après le premier build.
-    high: { class_min: 4 }
+    # Seuls 9 % des hexagones ont une installation, souvent une microcentrale
+    # (médiane 0,025 MW/km²). "Élevé" retient le quart le plus équipé des
+    # hexagones de la métropole qui en ont une : 0,1 MW/km², soit 2,4 % du
+    # territoire (de 0 % en Hauts-de-France à 6,4 % en Auvergne-Rhône-Alpes).
+    high: { value: 0.1 }
     low: { class_max: 1 }
     description: >
       Puissance hydraulique raccordée (barrages, centrales au fil de l'eau,
