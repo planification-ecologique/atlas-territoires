@@ -281,6 +281,27 @@
     "class_max": 1
    },
    "description": "Puissance solaire et éolienne raccordée, en MW par km². Le registre national est publié par commune : la puissance est répartie uniformément sur les hexagones de la commune (approximation à remplacer par les localisations exactes quand elles seront disponibles).\n"
+  },
+  {
+   "id": "hydro_puissance",
+   "label": "Puissance hydraulique installée",
+   "theme": "energie",
+   "role": "opportunite",
+   "unit": "MW/km²",
+   "source": {
+    "id": "odre_registre",
+    "label": "ODRÉ, registre national des installations de production et de stockage d'électricité",
+    "licence": "Licence Ouverte 2.0",
+    "page": "https://www.data.gouv.fr/datasets/registre-national-des-installations-de-production-et-de-stockage-delectricite-au-30-09-2026"
+   },
+   "classes": "quantiles",
+   "high": {
+    "class_min": 4
+   },
+   "low": {
+    "class_max": 1
+   },
+   "description": "Puissance hydraulique raccordée (barrages, centrales au fil de l'eau, stations de pompage), en MW par km². Comptée à part du solaire et de l'éolien : le parc est surtout ancien et occupe peu de foncier, l'enjeu porte sur les cours d'eau. Même répartition par commune que l'indicateur EnR.\n"
   }
  ],
  "pairs": [
@@ -465,6 +486,34 @@
    },
    "title": "Énergies renouvelables loin des habitations",
    "question": "Les territoires peu denses qui accueillent la production d'énergie en tirent-ils des retombées, et comment la SNAT organise-t-elle la solidarité entre territoires producteurs et consommateurs ?\n"
+  },
+  {
+   "id": "hydro_x_natura",
+   "type": "conflit",
+   "a": {
+    "indicator": "hydro_puissance",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "natura2000",
+    "end": "high"
+   },
+   "title": "Hydroélectricité dans des sites Natura 2000",
+   "question": "Comment la SNAT concilie-t-elle le maintien, voire la relance, de l'hydroélectricité avec la continuité écologique des cours d'eau et les habitats protégés ?\n"
+  },
+  {
+   "id": "hydro_x_znieff",
+   "type": "conflit",
+   "a": {
+    "indicator": "hydro_puissance",
+    "end": "high"
+   },
+   "b": {
+    "indicator": "znieff1",
+    "end": "high"
+   },
+   "title": "Hydroélectricité dans des ZNIEFF de type 1",
+   "question": "Les projets de nouvelles centrales ou de rehausse de barrages évitent-ils les milieux naturels les plus remarquables ?\n"
   }
  ],
  "regions": {
