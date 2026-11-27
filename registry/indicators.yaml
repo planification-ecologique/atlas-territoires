@@ -201,3 +201,24 @@ indicators:
       national est publié par commune : la puissance est répartie uniformément
       sur les hexagones de la commune (approximation à remplacer par les
       localisations exactes quand elles seront disponibles).
+
+  - id: hydro_puissance
+    label: Puissance hydraulique installée
+    theme: energie
+    role: opportunite
+    unit: MW/km²
+    method: commune_spread_density
+    source: odre_registre
+    params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Hydraulique] } }
+    classes: quantiles
+    # Peu de communes ont une installation : les classes 2 à 5 découpent les
+    # seules valeurs positives. "Élevé" = classe 4 et plus (au-dessus du tiers
+    # supérieur des communes équipées), à recaler après le premier build.
+    high: { class_min: 4 }
+    low: { class_max: 1 }
+    description: >
+      Puissance hydraulique raccordée (barrages, centrales au fil de l'eau,
+      stations de pompage), en MW par km². Comptée à part du solaire et de
+      l'éolien : le parc est surtout ancien et occupe peu de foncier, l'enjeu
+      porte sur les cours d'eau. Même répartition par commune que l'indicateur
+      EnR.

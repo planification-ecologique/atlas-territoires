@@ -135,3 +135,22 @@ pairs:
       Les territoires peu denses qui accueillent la production d'énergie en
       tirent-ils des retombées, et comment la SNAT organise-t-elle la
       solidarité entre territoires producteurs et consommateurs ?
+
+  - id: hydro_x_natura
+    type: conflit
+    a: { indicator: hydro_puissance, end: high }
+    b: { indicator: natura2000, end: high }
+    title: Hydroélectricité dans des sites Natura 2000
+    question: >
+      Comment la SNAT concilie-t-elle le maintien, voire la relance, de
+      l'hydroélectricité avec la continuité écologique des cours d'eau et les
+      habitats protégés ?
+
+  - id: hydro_x_znieff
+    type: conflit
+    a: { indicator: hydro_puissance, end: high }
+    b: { indicator: znieff1, end: high }
+    title: Hydroélectricité dans des ZNIEFF de type 1
+    question: >
+      Les projets de nouvelles centrales ou de rehausse de barrages
+      évitent-ils les milieux naturels les plus remarquables ?
