@@ -140,6 +140,9 @@ def build_demo(reg: Registry, out: Path, region: str = "24", res: int = 8, seed:
     enr = np.where(rng.random(n) < 0.12 * (0.3 + wind), rng.gamma(1.5, 1.2, n) * (0.5 + 2 * wind), 0.0)
     enr += np.where(rng.random(n) < 0.03, rng.gamma(1.2, 0.8, n), 0)  # solaire au sol épars
 
+    # Hydraulique : quelques centrales le long des cours d'eau (zones inondables).
+    hydro = np.where((flood > 0.3) & (rng.random(n) < 0.03), rng.gamma(1.0, 1.5, n), 0.0)
+
     values = {
         "pop_densite": density,
         "pop_habitants": residents,
@@ -152,6 +155,7 @@ def build_demo(reg: Registry, out: Path, region: str = "24", res: int = 8, seed:
         "znieff1": znieff,
         "agri_part": farm,
         "enr_puissance": enr,
+        "hydro_puissance": hydro,
     }
     values = {k: np.asarray(v, dtype=np.float32) for k, v in values.items()}
     write_registry(reg, out)

@@ -201,3 +201,25 @@ indicators:
       national est publié par commune : la puissance est répartie uniformément
       sur les hexagones de la commune (approximation à remplacer par les
       localisations exactes quand elles seront disponibles).
+
+  - id: hydro_puissance
+    label: Puissance hydraulique installée
+    theme: energie
+    role: opportunite
+    unit: MW/km²
+    method: commune_spread_density
+    source: odre_registre
+    params: { field: puismaxinstallee, factor: 0.001, filter: { filiere: [Hydraulique] } }
+    classes: quantiles
+    # Seuls 9 % des hexagones ont une installation, souvent une microcentrale
+    # (médiane 0,025 MW/km²). "Élevé" retient le quart le plus équipé des
+    # hexagones de la métropole qui en ont une : 0,1 MW/km², soit 2,4 % du
+    # territoire (de 0 % en Hauts-de-France à 6,4 % en Auvergne-Rhône-Alpes).
+    high: { value: 0.1 }
+    low: { class_max: 1 }
+    description: >
+      Puissance hydraulique raccordée (barrages, centrales au fil de l'eau,
+      stations de pompage), en MW par km². Comptée à part du solaire et de
+      l'éolien : le parc est surtout ancien et occupe peu de foncier, l'enjeu
+      porte sur les cours d'eau. Même répartition par commune que l'indicateur
+      EnR.

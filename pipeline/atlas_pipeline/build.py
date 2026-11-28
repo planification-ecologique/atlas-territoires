@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from . import grid, sources
-from .export import write_array, write_region, write_registry
+from .export import read_array, read_layer, write_array, write_region, write_registry
 from .indicators import GridContext, compute
 from .registry import Registry
 
@@ -63,6 +63,9 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
                 raise
             print(f"  ✗ {ind['id']} ignoré : {e}")
 
+    if only:
+        _keep_existing(values, out / region, res, cells, {i["id"] for i in reg.indicators})
+
     write_registry(reg, out)
     places = [
         {"name": n, "lng": float(g.centroid.x), "lat": float(g.centroid.y)}
@@ -75,3 +78,16 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
     )
     write_array(out / region / f"r{res}" / "commune.json", cell_commune, "<i4")
     return manifest
+
+
+def _keep_existing(values: dict[str, np.ndarray], rdir: Path, res: int, cells: np.ndarray, reg_ids: set[str]) -> None:
+    """Avec --only, reprend les indicateurs déjà construits au lieu de les perdre."""
+    cdir = rdir / f"r{res}"
+    if not (cdir / "cells.json").exists():
+        return
+    if not np.array_equal(read_array(cdir / "cells.json"), cells):
+        raise RuntimeError(f"{cdir} : grille différente, reconstruire tous les indicateurs")
+    for f in sorted(cdir.glob("*.json")):
+        if f.stem not in values and f.stem in reg_ids:
+            values[f.stem] = read_layer(f)[0].copy()
+            print(f"  = {f.stem} (repris)")
