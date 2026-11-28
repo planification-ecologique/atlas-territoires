@@ -3,9 +3,9 @@
  "name": "Grand Est",
  "res": 8,
  "cells": 85925,
- "area_km2": 57551.7532903821,
+ "area_km2": 57551.75329038236,
  "synthetic": false,
- "built": "2026-11-26",
+ "built": "2026-11-27",
  "indicators": {
   "pop_densite": {
    "breaks": [
@@ -143,81 +143,81 @@
  "pairs": {
   "conso_x_agri": {
    "cells": 9710,
-   "hectares": 651412.5252904404,
-   "share": 0.11318725982224816,
+   "hectares": 651412.5252904402,
+   "share": 0.1131872598222476,
    "residents": 633115.0
   },
   "conso_x_natura": {
    "cells": 748,
-   "hectares": 50363.919331571466,
-   "share": 0.008751066032246867,
+   "hectares": 50363.91933156905,
+   "share": 0.008751066032246407,
    "residents": 47087.5
   },
   "conso_x_znieff": {
    "cells": 872,
-   "hectares": 58906.20729075904,
-   "share": 0.010235345393135623,
+   "hectares": 58906.207290756516,
+   "share": 0.010235345393135139,
    "residents": 60406.0
   },
   "conso_x_inondation": {
    "cells": 6029,
-   "hectares": 406393.6044131535,
-   "share": 0.07061359231970939,
+   "hectares": 406393.604413133,
+   "share": 0.0706135923197055,
    "residents": 1744140.5
   },
   "conso_habitat_x_densite_basse": {
    "cells": 1034,
-   "hectares": 69376.59728108044,
-   "share": 0.01205464530872502,
+   "hectares": 69376.59728107162,
+   "share": 0.012054645308723433,
    "residents": 3641.0
   },
   "densite_x_inondation": {
    "cells": 1750,
-   "hectares": 118249.69291060224,
-   "share": 0.020546670804964653,
+   "hectares": 118249.6929105953,
+   "share": 0.020546670804963356,
    "residents": 1906937.5
   },
   "ages_x_inondation": {
    "cells": 1209,
-   "hectares": 81084.75840736844,
-   "share": 0.0140890161935204,
+   "hectares": 81084.75840737252,
+   "share": 0.014089016193521044,
    "residents": 247291.0
   },
   "pauvrete_x_inondation": {
    "cells": 1508,
-   "hectares": 100917.88564923672,
-   "share": 0.01753515399262421,
+   "hectares": 100917.88564922826,
+   "share": 0.017535153992622662,
    "residents": 1115107.0
   },
   "inondation_x_densite_basse": {
    "cells": 11600,
-   "hectares": 777462.2972489906,
-   "share": 0.13508924625219335,
+   "hectares": 777462.2972490086,
+   "share": 0.13508924625219584,
    "residents": 17165.5
   },
   "natura_x_conso_basse": {
    "cells": 6814,
-   "hectares": 457136.971467436,
-   "share": 0.07943058991807145,
+   "hectares": 457136.9714674559,
+   "share": 0.07943058991807454,
    "residents": 13706.5
   },
   "enr_x_natura": {
-   "cells": 366,
-   "hectares": 24811.379166620423,
-   "share": 0.004311142189088935,
-   "residents": 4494.5
+   "cells": 339,
+   "hectares": 22991.53446022525,
+   "share": 0.003994932064748657,
+   "residents": 3577.5
   },
   "enr_x_agri": {
-   "cells": 5800,
-   "hectares": 385626.0611046228,
-   "share": 0.06700509351277532,
-   "residents": 100091.0
+   "cells": 5758,
+   "hectares": 382776.60521055857,
+   "share": 0.06650998159503951,
+   "residents": 98225.0
   },
   "enr_x_densite_basse": {
-   "cells": 6507,
-   "hectares": 433493.46234947053,
-   "share": 0.07532237291924776,
-   "residents": 5237.5
+   "cells": 6450,
+   "hectares": 429610.5615282866,
+   "share": 0.07464769307038298,
+   "residents": 5093.0
   }
  },
  "places": [

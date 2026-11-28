@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from . import grid, sources
-from .export import write_region, write_registry
+from .export import write_array, write_region, write_registry
 from .indicators import GridContext, compute
 from .registry import Registry
 
@@ -73,5 +73,5 @@ def build_region(reg: Registry, region: str, res: int, out: Path, only: list[str
         __import__("json").dumps({"codes": communes["code"].tolist(), "noms": communes["nom"].tolist()}, ensure_ascii=False),
         encoding="utf-8",
     )
-    cell_commune.astype("<i4").tofile(out / region / f"r{res}" / "commune.i32")
+    write_array(out / region / f"r{res}" / "commune.json", cell_commune, "<i4")
     return manifest

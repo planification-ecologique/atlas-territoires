@@ -5,7 +5,7 @@
  "cells": 58603,
  "area_km2": 39423.68346014134,
  "synthetic": false,
- "built": "2026-11-26",
+ "built": "2026-11-27",
  "indicators": {
   "pop_densite": {
    "breaks": [
@@ -202,22 +202,22 @@
    "residents": 18316.0
   },
   "enr_x_natura": {
-   "cells": 815,
-   "hectares": 54612.61642400811,
-   "share": 0.01385274323218004,
-   "residents": 13157.0
+   "cells": 785,
+   "hectares": 52552.29407804772,
+   "share": 0.013330132921541907,
+   "residents": 12805.5
   },
   "enr_x_agri": {
-   "cells": 4208,
-   "hectares": 282281.54641026753,
-   "share": 0.07160202234671034,
-   "residents": 68979.0
+   "cells": 4109,
+   "hectares": 275587.40830000717,
+   "share": 0.06990402319423938,
+   "residents": 67992.5
   },
   "enr_x_densite_basse": {
-   "cells": 4547,
-   "hectares": 305189.1386703442,
-   "share": 0.07741263927783425,
-   "residents": 10057.5
+   "cells": 4441,
+   "hectares": 298013.0348115009,
+   "share": 0.0755923872797939,
+   "residents": 9651.5
   }
  },
  "places": [
